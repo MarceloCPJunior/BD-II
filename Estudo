@@ -1,0 +1,58 @@
+--= Database =--
+--Criar
+//Versão simples.
+CREATE DATABASE empresadb;
+
+--Deletar
+DROP DATABASE empresadb;
+
+--= Schemas =--
+--Criar
+CREATE SCHEMA empresaschema;
+  
+--Deletar
+DROP SCHEMA empresaschema;
+  
+--= Table =--
+--Criar
+CREATE TABLE empresaschema.departamento 
+(
+    id INTEGER PRIMARY KEY,
+  	dnumero INTEGER DEFAULT 0,  --Começa o valor em 0 caso não seja instanciada
+ 	  dnome VARCHAR(255) UNIQUE,  --Não permit mais de uma tabela com um atributo idêntico
+  	cpf_gerente VARCHAR(11),
+  	data_inicio_gerente DATE
+);
+  
+--Deletar
+DROP TABLE departamento;
+
+--CRIAÇÃO DE UMA CHAVE ESTRANGEIRA
+--ON DELETE CASCADE define para que caso a tabela que estejá conectada seja deletada essa referência seja deletada também
+--ON UPDATE CASCADE define para que caso a chave primária referênciada seja alterada essa chave estrangeira seja alterada
+--ON DELETE SET NULL ao invés de remover a referência ele seta ela como nula
+CONSTRAINT fk_dnum FOREIGN KEY (dnum) REFERENCES departamento(id) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--Validação
+--Caso dnumero sejá definido ou alterado verifica se é maior que 0 e menor que 20
+CONSTRAINT nome_restricao_chek CHECK (dnumero > 0 AND dnumero <20);
+
+--Inserir
+INSERT INTO departamento (id, dnome, cpf_gerente, data_inicio_gerente) VALUES (1, 'nome', '04258741618', '2000-05-20');
+
+--Alterar
+--Define mais de uma chave primaria
+ALTER TABLE departamento ADD CONSTRAINT dep_pk PRIMARY KEY (id, dnumero);
+
+--Consultar
+SELECT * FROM departamento
+
+--= Mais =--
+--IF EXISTS usado em DROP para forçar o script a continuar mesmo que não exista algo para deletar
+DROP DATABASE IF EXISTS empresadb;
+
+--CASCADE Dropa em sequência tudo conectado ao drop em questão, normalmente usado em schema
+DROP SCHEMA empresaschema CASCADE;
+
+--Seta o path para empresaschema
+SET search_path = empresaschema;
