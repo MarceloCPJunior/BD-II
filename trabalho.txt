@@ -1,0 +1,136 @@
+--DATABASE
+CREATE DATABASE escola;
+
+--SCHEMAS
+
+CREATE SCHEMA rh;
+CREATE SCHEMA academico;
+CREATE SCHEMA organizacional;
+
+--RH
+
+CREATE TYPE rh.FUNCAO AS ENUM ('professor', 'limpeza', 'cozinha', 'psicólogo', 'coordenador', 'auxilio');
+
+CREATE TABLE rh.funcionario (
+	matricula SERIAL PRIMARY KEY,
+	nome VARCHAR(50) NOT NULL,
+	sobrenome VARCHAR(50) NOT NULL,
+	conta_bancaria VARCHAR(30) NOT NULL,
+	rg VARCHAR(8) NOT NULL,
+	cpf VARCHAR(11) NOT NULL,
+	endereco VARCHAR(50) NOT NULL,
+	funcao rh.FUNCAO
+);
+
+CREATE TABLE rh.pagamento (
+	id SERIAL PRIMARY KEY,
+	data TIMESTAMP,
+	valor REAL,
+	matricula_funcionario INTEGER,
+	FOREIGN KEY (matricula_funcionario) REFERENCES rh.funcionario (matricula)
+);
+
+-- ACADEMICO
+
+CREATE TABLE academico.materia (
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(50),
+	carga_horaria INTEGER
+);
+
+CREATE TABLE academico.professor (
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(50),
+	sobrenome VARCHAR(50),
+	matricula INTEGER,
+	materia_id INTEGER,
+	FOREIGN KEY (matricula) REFERENCES rh.funcionario (matricula) 
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
+	FOREIGN KEY (materia_id) REFERENCES academico.materia (id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+
+ALTER TABLE academico.materia ADD COLUMN professor_id INTEGER;
+
+ALTER TABLE academico.materia ADD
+CONSTRAINT materia_professor_id_fkey FOREIGN KEY (professor_id)
+REFERENCES academico.professor(id) ON DELETE SET NULL ON UPDATE CASCADE;
+
+CREATE TABLE academico.aluno (
+	matricula SERIAL PRIMARY KEY,
+	nome VARCHAR(50),
+	sobrenome VARCHAR(50),
+	cpf VARCHAR(11),
+	materia INTEGER,
+	FOREIGN KEY (materia) REFERENCES academico.materia (id) 
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+
+CREATE TABLE academico.coordenador (
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(50),
+	sobrenome VARCHAR(50),
+	matricula INTEGER,
+	materia INTEGER,
+	FOREIGN KEY (matricula) REFERENCES rh.funcionario (matricula) 
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
+	FOREIGN KEY (materia) REFERENCES academico.materia (id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+
+CREATE TABLE academico.psicologo (
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(50),
+	sobrenome VARCHAR(50),
+	matricula INTEGER,
+	aluno INTEGER,
+	FOREIGN KEY (matricula) REFERENCES rh.funcionario (matricula) 
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
+	FOREIGN KEY (aluno) REFERENCES academico.aluno (matricula)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+
+--ORGANIZACIONAL
+
+CREATE TYPE organizacional.SETORES 
+AS ENUM ('cozinha', 'sala 0-10', 'sala 11-15', 'patio', 'coordenação', 'geral');
+
+CREATE TABLE organizacional.funcionario (
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(50),
+	sobrenome VARCHAR(50),
+	setor organizacional.SETORES,
+	matricula INTEGER,
+	FOREIGN KEY (matricula) REFERENCES rh.funcionario (matricula)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE
+);
+
+
+--ACESSOS
+
+CREATE ROLE diretor PASSWORD 'senha123';
+CREATE ROLE coordenador PASSWORD '123senha';
+CREATE ROLE professor PASSWORD 's321654';
+CREATE ROLE aluno PASSWORD 'asdf1a6sd4f16a8d';
+CREATE ROLE gerente_rh PASSWORD 'asdfasdf';
+
+GRANT ALL ON ALL TABLES IN SCHEMA "academico", "organizacional", "rh"
+TO diretor;
+GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA "academico"
+TO coordenador;
+GRANT INSERT, UPDATE, SELECT ON ALL TABLES IN SCHEMA "academico"
+TO professor;
+GRANT SELECT ON academico.materia
+TO aluno;
+GRANT ALL ON ALL TABLES IN SCHEMA "rh", "organizacional"
+TO gerente_rh;
+
+ALTER DATABASE escola OWNER TO diretor;
