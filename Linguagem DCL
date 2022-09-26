@@ -1,0 +1,45 @@
+--CREATE
+
+CREATE ROLE estagiario PASSWORD '123' VALID UNTIL '01/12/2020';
+CREATE ROLE boss PASSWORD '123' SUPERUSER;
+CREATE ROLE dba PASSWORD '123' CREATEDB;
+CREATE ROLE adm PASSWORD '123' CREATEROLE;
+
+CREATE ROLE zezinho NOSUPERUSER NOCREATEDB NOCREATEROLE PASSWORD '123' INHERIT LOGIN;
+INHERIT define o que ele tem acesso.
+é possivel criar uma ROLE sem senha.
+
+--DROP
+
+DROP ROLE <nome usuario>;
+DROP OWNED BY <nome usuario>; -- Retira todas as permissões do usuário
+
+--ALTER
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA <nome schema> GRANT SELECT ON TABLES TO PUBLIC;
+PUBLIC é o usuário publico
+
+
+--GRANT
+
+GRANT boss TO estagiario, dba;
+GRANT CONNECT ON DATABASE <nome database> TO <nome usuario>;
+GRANT USAGE ON SCHEMA <nome schema> TO <nome usuario>;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA <nome schema> TO <nome usuario>; --garante permissão de tudo que está no schema escolhido para o usuario
+GRANT INSERT, UPDATE, SELECT ON ALL TABLES IN SHEMA <nome schema> TO <nome usuario>;
+
+CONNECT para banco de dados
+USAGE para schemas
+
+
+--REVOKE
+
+REVOKE boss FROM estagiario;
+REVOKE SELECT ON ALL TABLES IN SCHEMA <nome schema> TO <nome usuario>;
+REVOKE ALL ON DATABASE <nome database> FROM PUBLIC; -- retirando todas as permissões do database escolhido dos usuarios publicos
+REVOKE CONNECT ON DATABASE <nome database> FROM <usuario>;
+pode ser colocado PUBLIC no usuario para revogar de todos os usuarios publicos
+
+--REASSIGN
+
+REASSIGN OWNED BY <usuario em questão> TO <outro usuario que recebera esses privilegios>;
