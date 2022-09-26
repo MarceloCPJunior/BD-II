@@ -1,0 +1,18 @@
+--INSERT
+
+INSERT INTO <tabela> [(<atributo1>[, <atributo2>, ...])] VALUES (<valor1>[, <valor2>, ...]) [, (<valor1>[, <valor2>, ...]), (<valor1>[, <valor2>, ...])];
+
+se os atributos não forem colocados então os valores serão colocados na ordem dos atributos da tabela.
+é possivel adicionar mais de um conjunto na mesma liha de código
+
+--UPDATE
+
+UPDATE <nome> SET <campo> = <valor> [, <campo> = <valor>] [WHERE <condição>];
+
+se WHERE não for colocado então todos do campo selecionado serão alterados.
+
+--DELETE
+
+DELETE FROM <tabela> [WHERE <lista de condições>]
+
+se WHERE não for colocado então todos os campos serão deletados
