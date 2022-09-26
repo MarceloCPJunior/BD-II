@@ -1,0 +1,39 @@
+SUPERUSUARIO / DONO
+
+--CREATE
+CREATE DATABASE <nome> [WITH OWNER = <dono_banco_de_dados>] [ENCODING] = <codificação>;
+
+WITH OWNER = define alguem como o dono do banco de dados criado, se não for colocado o criador sera o dono.
+ENCODING = define o tipo de linguagem usada, como exemplo UTF-8.
+
+CREATE SCHEMA <nome> [AUTHORIZATION] <dono_do_schema>;
+
+AUTHORIZATION = define o quem tem acesso ao schema, se não for colocado o criador sera o dono.
+
+CREATE [TEMPORARY | TEMP] TABLE <nome>
+(
+    <atributo><tipo>[NULL | NOT NULL] [restrição do atributo],
+    [CONSTRAINT <nome da restrição de tabela> <tipo de restrição de tabela>]
+    [CONSTRAINT <nome da chave estrangeira> FOREIGN KEY (atributo da tabela que sera a chave estrangeira) 
+    REFERENCES <nome da tabela referenciada><chave primaria referenciada>]
+);
+
+TEMP = cria uma tabela temporaria.
+NULL = define que o atributo pode ser nulo.
+NOT NULL = define que o atributo não pode ser nulo.
+CONSTRAINT = usado para criar restrições, como chave primaria, chave estrangeira e assim por diante
+<tipo de restrição de tabela> = FOREIGN KEY (atributo da tabela que sera a chave estrangeira)
+                                REFERENCES <nome da tabela referenciada><chave primaria referenciada>];
+                                CHECK (restrição);
+
+
+
+--DROP
+DROP DATABASE [IF EXISTS] <nome>;
+IF EXISTS = o comando sera executado somente se o banco de dados existir, caso não exista ele mostra uma mensagem mas não da erro na execução.
+
+DROP SCHEMA [IF EXISTS] <nome> [CASCADE];
+CASCADE = permite excluir mesmo que tenha objetos dentro do schema como tabelas,
+caso não colocado e o schema tenha objetos dentro dele retornara uma mensagem de erro.
+
+DROP TABLE [IF EXISTS] <nome> [CASCADE]
