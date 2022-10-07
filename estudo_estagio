@@ -1,1 +1,55 @@
+DROP TABLE userposjava;
 
+CREATE TABLE userposjava(
+	id BIGINT NOT NULL,
+	nome CHARACTER VARYING(255),
+	email CHARACTER VARYING(255),
+	CONSTRAINT user_pk PRIMARY KEY (id)
+);
+
+INSERT INTO userposjava(id, nome, email) VALUES(1, 'marcelo', 'marcelo.junior@gmail.com'), (2, 'joão', 'joao.teste@gmail.com');
+
+CREATE SEQUENCE usersequence
+INCREMENT 1
+MINVALUE 1
+MAXVALUE 9223372036854775807
+START 5;
+
+DROP SEQUENCE userserquence;
+
+DELETE FROM userposjava WHERE id = '2';
+
+ALTER TABLE userposjava ALTER COLUMN id SET DEFAULT nextval('usersequence'::regclass);
+
+ALTER TABLE userposjava ADD UNIQUE (id);
+
+CREATE TABLE telefoneuser(
+	id BIGINT NOT NULL,
+	numero CHARACTER VARYING (255) NOT NULL,
+	tipo CHARACTER VARYING (255) NOT NULL,
+	usuariopessoa BIGINT NOT NULL,
+	CONSTRAINT telefone_pk PRIMARY KEY (id)
+);
+
+ALTER TABLE telefoneuser ADD FOREIGN KEY (usuariopessoa) REFERENCES userposjava (id);
+
+CREATE SEQUENCE public.telefonesequence
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+ALTER SEQUENCE public.telefonesequence
+    OWNER TO postgres;
+	
+ALTER TABLE IF EXISTS public.telefoneuser ALTER COLUMN id SET DEFAULT nextval('telefonesequence'::regclass);
+
+INSERT INTO telefoneuser(numero, tipo, usuariopessoa) VALUES ('16513513', 'celular', 4), ('158135524', 'telefone', 4);
+
+SELECT * FROM userposjava;
+SELECT * FROM telefoneuser;
+
+
+SELECT numero,nome FROM telefoneuser as fone
+INNER JOIN userposjava as userp
+ON fone.usuariopessoa = userp.id;
