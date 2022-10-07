@@ -50,6 +50,9 @@ SELECT * FROM userposjava;
 SELECT * FROM telefoneuser;
 
 
-SELECT numero,nome FROM telefoneuser as fone
+SELECT nome,numero,email FROM telefoneuser as fone
 INNER JOIN userposjava as userp
-ON fone.usuariopessoa = userp.id;
+ON fone.usuariopessoa = userp.id
+WHERE userp.id = 4;
+
+DELETE FROM userposjava WHERE id = 7;
